@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+
+
+{% block title %}Detalle del Aviso{% endblock %}
+
+
+{% block content %}
+
+<h1>Detalle del Aviso de Adopción</h1>
+
+
+{% if aviso %}
+
+<div class="detalle-aviso">
+    
+    <!-- Información de ubicación -->
+    <h2>¿Donde?</h2>
+    
+    <p><strong>Región:</strong> {{ aviso.comuna.region.nombre }}</p>
+    <p><strong>Comuna:</strong> {{ aviso.comuna.nombre }}</p>
+    <p><strong>Sector:</strong> {{ aviso.sector or 'No especificado' }}</p>
+
+
+    <!-- Información de contacto -->
+    <h2>¿Contacto de esta publicación?</h2>
+    
+    <p><strong>Nombre:</strong> {{ aviso.nombre }}</p>
+    <p><strong>Email:</strong> {{ aviso.email }}</p>
+    <p><strong>Celular:</strong> {{ aviso.celular or 'No especificado' }}</p>
+
+
+    {% if aviso.contactos %}
+    <p><strong>Contactar por:</strong>
+        {% for contacto in aviso.contactos %}
+            {{ contacto.nombre }}: {{ contacto.identificador }}{% if not loop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+    {% endif %}
+
+
+    <!-- Información de la mascota -->
+    <h2>¿Qué mascota ofrece en adopción?</h2>
+    
+    <p><strong>Tipo:</strong> {{ aviso.tipo }}</p>
+    <p><strong>Cantidad:</strong> {{ aviso.cantidad }}</p>
+    <p><strong>Edad:</strong> {{ aviso.edad }} {{ 'años' if aviso.unidad_medida == 'a' else 'meses' }}</p>
+    <p><strong>Fecha disponible para entrega:</strong> {{ aviso.fecha_entrega.strftime('%d/%m/%Y %H:%M') }}</p>
+    <p><strong>Descripción:</strong> {{ aviso.descripcion or 'No hay descripción' }}</p>
+
+
+    <!-- Fotos -->
+    <h2>Fotos</h2>
+    
+    {% if aviso.fotos %}
+        <div class="fotos">
+            {% for foto in aviso.fotos %}
+                <img src="{{ url_for('static', filename=foto.ruta_archivo) }}" 
+                     alt="Foto mascota" width="200" style="margin: 10px;">
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No hay fotos disponibles</p>
+    {% endif %}
+    
+</div>
+
+{% else %}
+
+    <p>El aviso no existe o fue eliminado</p>
+
+{% endif %}
+
+
+<a href="{{ url_for('listar_avisos') }}">← Volver al listado</a>
+
+{% endblock %}
