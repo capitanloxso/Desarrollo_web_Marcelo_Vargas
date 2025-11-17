@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Listado de Avisos{% endblock %}
+
+{% block content %}
+<h1>Listado de Avisos de Adopción</h1>
+
+<div id="modalEvaluacion" style="display:none; position:fixed; z-index:999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+    <div style="background-color:white; margin:15% auto; padding:20px; border:1px solid #888; width:300px; border-radius:8px; text-align:center;">
+        <h3>Evaluar Aviso</h3>
+        <p>Seleccione una nota (1 a 7):</p>
+        <select id="selectNota" style="padding:5px; margin-bottom:15px;">
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+        </select>
+        <input type="hidden" id="avisoIdEvaluar">
+        <br>
+        <button onclick="enviarEvaluacion()">Enviar Nota</button>
+        <button onclick="cerrarModal()" style="background-color:#f44336;">Cancelar</button>
+    </div>
+</div>
+
+<table id="tabla2">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Fecha publicación</th>
+            <th>Sector</th>
+            <th>Cantidad Tipo Edad</th>
+            <th>Comuna</th>
+            <th>Nota</th> <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for aviso in avisos.items %}
+        <tr>
+            <td>{{ aviso.id }}</td>
+            <td>{{ aviso.fecha_ingreso.strftime('%d/%m/%Y') }}</td>
+            <td>{{ aviso.sector or 'N/A' }}</td>
+            <td>{{ aviso.cantidad }} {{ aviso.tipo }} ({{ aviso.edad }} {{ aviso.unidad_medida }})</td>
+            <td>{{ aviso.comuna.nombre }}</td>
+            
+            <td id="promedio-{{ aviso.id }}" class="promedio-col" data-id="{{ aviso.id }}">-</td>
+            
+            <td>
+                <a href="{{ url_for('detalle_aviso', aviso_id=aviso.id) }}">Ver</a>
+                <button onclick="abrirModal({{ aviso.id }})">Evaluar</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination">
+    {% if avisos.has_prev %}
+        <a href="{{ url_for('listar_avisos', page=avisos.prev_num) }}">← Anterior</a>
+    {% endif %}
+    <span>Página {{ avisos.page }} de {{ avisos.pages }}</span>
+    {% if avisos.has_next %}
+        <a href="{{ url_for('listar_avisos', page=avisos.next_num) }}">Siguiente →</a>
+    {% endif %}
+</div>
+
+<script>
+    const JAVA_API = 'http://localhost:8080/api/notas';
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Cargar promedios al iniciar
+        document.querySelectorAll('.promedio-col').forEach(celda => {
+            const id = celda.dataset.id;
+            fetch(`${JAVA_API}/promedio/${id}`)
+                .then(res => res.json())
+                .then(data => celda.innerText = data.promedio)
+                .catch(err => console.log("Error cargando notas (¿Está prendido Spring Boot?)"));
+        });
+    });
+
+    function abrirModal(id) {
+        document.getElementById('avisoIdEvaluar').value = id;
+        document.getElementById('modalEvaluacion').style.display = 'block';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalEvaluacion').style.display = 'none';
+    }
+
+    function enviarEvaluacion() {
+        const id = document.getElementById('avisoIdEvaluar').value;
+        const nota = document.getElementById('selectNota').value;
+
+        fetch(`${JAVA_API}/evaluar`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ avisoId: parseInt(id), nota: parseInt(nota) })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById(`promedio-${id}`).innerText = data.promedio;
+            cerrarModal();
+            alert("¡Nota enviada!");
+        })
+        .catch(err => alert("Error al conectar con el servidor de notas."));
+    }
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+{% endblock %}
