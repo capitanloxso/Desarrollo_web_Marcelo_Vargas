@@ -32,12 +32,14 @@
 Hacer "cd Tarea4" en dos terminales, una para cada servidor.
 
 Iniciar el Backend de Notas (Spring Boot):
+
 Bash1 
 cd backend-tarea4/
 mvn spring-boot:run
 
 Bash2
 python app.py
+
 
 
 
