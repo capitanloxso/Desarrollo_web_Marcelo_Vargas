@@ -1,0 +1,68 @@
+html, body{
+    height: 100%;
+    width: 100%;
+    background-color: gray;
+}
+#Bienvenido{
+ 
+    color: purple;
+}
+
+#opciones{
+    color: purple;
+}
+
+
+#tabla{
+    color: black;
+    background-color: lightskyblue;
+    border: 2px solid black; 
+    border-radius: 10px;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 99%;
+}
+
+#tabla th, #tabla td{
+    border: 1px solid black;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+
+
+#agregar_aviso_adopcion{
+    background-color: slategrey;
+    border: 1px solid black;
+    width: 95%;
+    height: 50%     ;
+
+}
+
+#tabla2{
+    color: black;
+    background-color: lightskyblue;
+    border: 2px solid black; 
+    border-radius: 10px;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 99%;
+}
+
+#tabla2 th, #tabla2 td{
+    border: 1px solid black;
+    padding: 8px 12px;
+    text-align: center;
+    
+
+}
+
+#tabla2 td{
+    cursor: pointer;
+} 
+
+#imagenes_de_mas_info{
+    text-align: right;  
+}
+
+

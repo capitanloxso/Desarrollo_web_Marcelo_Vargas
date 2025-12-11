@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Estadísticas{% endblock %}
+
+{% block content %}
+<h1>Estadísticas</h1>
+
+<div>
+    <h2>Avisos por Día</h2>
+    <div id="grafico1" style="width:100%; height:400px;"></div>
+</div>
+
+<div>
+    <h2>Avisos por Tipo</h2>
+    <div id="grafico2" style="width:100%; height:400px;"></div>
+</div>
+
+<div>
+    <h2>Avisos por Mes</h2>
+    <div id="grafico3" style="width:100%; height:400px;"></div>
+</div>
+
+<a href="{{ url_for('index') }}">Volver al inicio</a>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
+{% endblock %}

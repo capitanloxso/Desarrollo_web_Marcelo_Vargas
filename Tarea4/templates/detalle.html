@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+
+
+{% block title %}Detalle del Aviso{% endblock %}
+
+
+{% block content %}
+
+<h1>Detalle del Aviso de Adopción</h1>
+
+
+{% if aviso %}
+
+<div class="detalle-aviso">
+    
+    <!-- Información de ubicación -->
+    <h2>¿Donde?</h2>
+    
+    <p><strong>Región:</strong> {{ aviso.comuna.region.nombre }}</p>
+    <p><strong>Comuna:</strong> {{ aviso.comuna.nombre }}</p>
+    <p><strong>Sector:</strong> {{ aviso.sector or 'No especificado' }}</p>
+
+
+    <!-- Información de contacto -->
+    <h2>¿Contacto de esta publicación?</h2>
+    
+    <p><strong>Nombre:</strong> {{ aviso.nombre }}</p>
+    <p><strong>Email:</strong> {{ aviso.email }}</p>
+    <p><strong>Celular:</strong> {{ aviso.celular or 'No especificado' }}</p>
+
+
+    {% if aviso.contactos %}
+    <p><strong>Contactar por:</strong>
+        {% for contacto in aviso.contactos %}
+            {{ contacto.nombre }}: {{ contacto.identificador }}{% if not loop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+    {% endif %}
+
+
+    <!-- Información de la mascota -->
+    <h2>¿Qué mascota ofrece en adopción?</h2>
+    
+    <p><strong>Tipo:</strong> {{ aviso.tipo }}</p>
+    <p><strong>Cantidad:</strong> {{ aviso.cantidad }}</p>
+    <p><strong>Edad:</strong> {{ aviso.edad }} {{ 'años' if aviso.unidad_medida == 'a' else 'meses' }}</p>
+    <p><strong>Fecha disponible para entrega:</strong> {{ aviso.fecha_entrega.strftime('%d/%m/%Y %H:%M') }}</p>
+    <p><strong>Descripción:</strong> {{ aviso.descripcion or 'No hay descripción' }}</p>
+
+
+    <!-- Fotos -->
+    <h2>Fotos</h2>
+    
+    {% if aviso.fotos %}
+        <div class="fotos">
+            {% for foto in aviso.fotos %}
+                <img src="{{ url_for('static', filename=foto.ruta_archivo) }}" 
+                     alt="Foto mascota" width="200" style="margin: 10px;">
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No hay fotos disponibles</p>
+    {% endif %}
+    
+</div>
+
+{% else %}
+
+    <p>El aviso no existe o fue eliminado</p>
+
+{% endif %}
+
+
+<!-- COMENTARIOS -->
+<div style="margin-top: 30px;">
+    <h2>Comentarios</h2>
+    
+    <!-- Formulario para agregar comentario -->
+    <div style="background: #f0f0f0; padding: 15px; margin: 15px 0;">
+        <h3>Agregar Comentario</h3>
+        <form id="form-comentario">
+            <input type="hidden" id="aviso_id" value="{{ aviso.id }}">
+            
+            <div>
+                <label>Nombre:</label><br>
+                <input type="text" id="nombre_comentario" minlength="3" maxlength="80" required style="width: 300px;">
+                <div id="error-nombre" style="color: red;"></div>
+            </div>
+            
+            <div>
+                <label>Comentario:</label><br>
+                <textarea id="texto_comentario" cols="50" rows="4" minlength="5" required></textarea>
+                <div id="error-texto" style="color: red;"></div>
+            </div>
+            
+            <button type="submit">Agregar Comentario</button>
+        </form>
+    </div>
+
+    <!-- Lista de comentarios -->
+    <div id="lista-comentarios">
+        <p>Cargando comentarios...</p>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/comentarios.js') }}"></script>
+
+<a href="{{ url_for('listar_avisos') }}">← Volver al listado</a>
+
+
+
+
+{% endblock %}

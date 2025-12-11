@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Aviso{% endblock %}
+
+
+
+{% block content %}
+
+<h1>Agregar Aviso de Adopción</h1>
+
+
+<form id="agregar_aviso_adopcion" method="POST" enctype="multipart/form-data">
+    
+    <!-- Ubicación -->
+    <h2>¿Donde?</h2>
+    
+    <label for="region">Región</label>
+    <select name="region" id="region" required>
+        <option value="">Seleccione una region</option>
+        {% for region in regiones %}
+            <option value="{{ region.id }}">{{ region.nombre }}</option>
+        {% endfor %}
+    </select>
+
+    <br>
+
+    <label for="comuna">Comuna</label>
+    <select name="comuna" id="comuna" required>
+        <option value="">Seleccione una comuna</option>
+    </select>
+
+    <br>
+
+    <label for="sector">Sector</label>
+    <input type="text" name="sector" id="sector" maxlength="100" placeholder="Sector">
+
+
+    <!-- Información de contacto -->
+    <h2>¿Contacto de esta publicación?</h2>
+    
+    <label for="nombre_contacto">Nombre</label>
+    <input type="text" name="nombre" id="nombre_contacto" maxlength="200" minlength="3" required>
+
+    <br>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" maxlength="100" required>
+
+    <br>
+    
+    <label for="celular">Número de celular</label>
+    <input type="tel" id="celular" name="celular" placeholder="+56912345678">
+
+    <br>
+
+    <label for="contactar_por">Contactar por</label>
+    <select id="contactar_por" name="contactar_por">
+        <option value="">Seleccione una forma de contacto</option>
+        <option value="whatsapp">Whatsapp</option>
+        <option value="telegram">Telegram</option>
+        <option value="X">X</option>
+        <option value="instagram">Instagram</option>
+        <option value="tiktok">TikTok</option>
+        <option value="otra">Otra</option>
+    </select>
+
+
+
+    <!-- Información de la mascota -->
+    <h2>¿Qué mascota ofrece en adopción?</h2>
+    
+    <label for="tipo">Tipo</label>
+    <select id="tipo" name="tipo" required>
+        <option value="">Seleccione</option>
+        <option value="gato">Gato</option>
+        <option value="perro">Perro</option>
+    </select>
+
+    <br>
+
+    <label for="cantidad">Cantidad</label>
+    <input type="number" id="cantidad" name="cantidad" min="1" required>
+    
+    <br>
+    
+    <label for="edad">Edad</label>
+    <input type="number" id="edad" name="edad" min="1" required>
+
+    <br>
+
+    <label for="unidad">Unidad de medida</label>
+    <select id="unidad_medida" name="unidad_medida" required>
+        <option value="">Seleccione</option>
+        <option value="m">Meses</option>
+        <option value="a">Años</option>
+    </select>
+
+    <br>
+
+    <label for="fecha_entrega">Fecha disponible para entrega</label>
+    <input type="datetime-local" id="fecha_entrega" name="fecha_entrega" required>
+
+    <br>
+
+    <label for="descripcion">Descripción</label>
+    <textarea id="descripcion" name="descripcion" cols="50" rows="10"></textarea>
+
+    <br>
+
+    <label for="fotos">Fotos (1-5)</label>
+    <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
+    <div id="contenedorFotos"></div>
+
+    <br><br>
+
+    <button type="submit">Enviar aviso</button>
+
+</form>
+
+<script>
+// esto carga las comunas cuando cambia la region
+document.getElementById('region').addEventListener('change', function() {
+    
+    const regionId = this.value;
+    const comunaSelect = document.getElementById('comuna');
+    
+    
+    if (regionId) {
+        
+        fetch(`/comunas/${regionId}`)
+            .then(response => response.json())
+            .then(comunas => {
+                
+                comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
+                
+                comunas.forEach(comuna => {
+                    const option = document.createElement('option');
+                    option.value = comuna.id;
+                    option.textContent = comuna.nombre;
+                    comunaSelect.appendChild(option);
+                });
+                
+            });
+            
+    }
+   
+    
+
+
+
+    
+});
+</script>
+
+{% endblock %}
